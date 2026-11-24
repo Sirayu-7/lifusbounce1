@@ -1,100 +1,100 @@
 # lifusbounce
 
-`lifusbounce` is a Windows C++20 external overlay and research project for Rainbow Six Siege. It provides a Direct3D 11 overlay, game-session reading, ESP-style rendering, aim assistance, operator/weapon metadata, skeleton drawing, diagnostics, and a companion kernel driver.
+`lifusbounce` เป็นโปรเจกต์วิจัยและ overlay แบบ external บน Windows สำหรับ Rainbow Six Siege ที่พัฒนาด้วย C++20 โดยมี Direct3D 11 overlay, ตัวอ่านเซสชันเกม, การแสดงข้อมูลผู้เล่น, ระบบช่วยเล็ง, ข้อมูลโอเปอเรเตอร์และอาวุธ, การวาดโครงกระดูก, ระบบวินิจฉัย และ kernel driver คู่กัน
 
-This repository is a fork of [lifusdev/lifusbounce](https://github.com/lifusdev/lifusbounce).
+โปรเจกต์นี้เป็น fork ของ [lifusdev/lifusbounce](https://github.com/lifusdev/lifusbounce)
 
-> **Warning:** This project contains kernel-mode code and DSE-bypass-related behavior. It can modify system security state, load unsigned drivers, and trigger anti-cheat or Windows protections. Use it only in an isolated lab or on systems you own for authorized research. Do not use it to cheat in multiplayer games or in violation of a game's terms of service.
+> **คำเตือน:** โปรเจกต์นี้มีโค้ดโหมดเคอร์เนลและพฤติกรรมที่เกี่ยวข้องกับการหลบเลี่ยง DSE สามารถปรับเปลี่ยนสถานะความปลอดภัยของระบบ โหลด unsigned driver และกระตุ้นระบบป้องกันของ Windows หรือ anti-cheat กรุณาใช้งานเฉพาะในระบบแยกเพื่อการวิจัย หรือบนเครื่องที่คุณได้รับอนุญาตให้ทดสอบ ห้ามนำไปใช้เพื่อโกงในเกมออนไลน์หรือฝ่าฝืนข้อกำหนดการใช้งานของเกม
 
-## Features
+## คุณสมบัติ
 
-- Direct3D 11 / DirectComposition layered overlay
-- ImGui configuration panel
-- Player username, operator, health, weapon, and defuser indicators
-- 2D boxes and head/skeleton overlays
-- Configurable aim-assist settings and FOV display
-- Team checks and keybind controls
-- Operator badge and localized font resources
-- Kernel memory, process, region, and thread enumeration support
-- Zydis-based instruction decoding and emulation
-- Diagnostic archives and retention management
-- Custom kernel driver with a user-mode loader
+- Overlay ด้วย Direct3D 11 และ DirectComposition แบบ layered
+- แผงตั้งค่าด้วย Dear ImGui
+- แสดงชื่อผู้เล่น โอเปอเรเตอร์ พลังชีวิต อาวุธ และสถานะผู้กู้ระเบิด
+- กล่อง 2D และวงกลมหัวพร้อมโครงกระดูก
+- ตั้งค่าระบบช่วยเล็งและการแสดง FOV ได้
+- รองรับการตรวจทีมและคีย์บอร์ดกำหนดเอง
+- มีรูปภาพ badge ของโอเปอเรเตอร์และฟอนต์ฝังในรีซอร์ส
+- รองรับการอ่านหน่วยความจำกระบวนการ รายชื่อกระบวนการ Regions และ Threads จาก kernel
+- ใช้ Zydis สำหรับถอดรหัสและจำลองคำสั่ง
+- มีระบบบันทึกวินิจฉัย และจัดเก็บ/ล้าง artifacts อัตโนมัติ
+- มี kernel driver และ user-mode loader ที่ทำงานร่วมกัน
 
-## Requirements
+## ความต้องการของระบบ
 
-- Windows 10 or later, x64
-- Visual Studio with the C++ desktop workload
-- MSVC toolset (the project currently targets `v145`)
+- Windows 10 หรือใหม่กว่า เวอร์ชัน x64
+- Visual Studio พร้อมงาน C++ desktop development
+- MSVC toolset `v145`
 - Windows SDK 10
-- Windows Driver Kit (WDK), for building the kernel driver
-- Administrator privileges, where applicable
-- Hypervisor-protected Code Integrity (HVCI) must be disabled for unsigned kernel-driver loading
+- Windows Driver Kit (WDK) สำหรับคอมไพล์ kernel driver
+- สิทธิ์ Administrator เมื่อใช้งานฟังก์ชันที่เกี่ยวข้อง
+- ต้องปิด Hypervisor-protected Code Integrity (HVCI) เพื่อโหลด unsigned kernel driver
 
-## Repository layout
+## โครงสร้างโปรเจกต์
 
 ```text
 src/
-├── core/       Driver loading, memory primitives, diagnostics, disassembly, and emulation
-├── sdk/        Process/session reading and game feature logic
-└── ui/         Direct3D, ImGui, overlay, menu, resources, and rendering code
+├── core/       การโหลด driver, หน่วยความจำ, วินิจฉัย, disassembly และ emulation
+├── sdk/        การอ่านกระบวนการ/เซสชันและตรรกะของฟีเจอร์เกม
+└── ui/         Direct3D, ImGui, overlay, เมนู, รีซอร์ส และการวาดภาพ
 
 driver/
-├── src/        Kernel driver implementation
-├── include/    Shared driver interfaces
-├── loader/     Standalone vulnerable-driver loader utility
-└── resources/  INF and resource files
+├── src/        โค้ดตัว kernel driver
+├── include/    อินเทอร์เฟซและประเภทข้อมูลร่วมของ driver
+├── loader/     Loader สำหรับโหลดและถอดถอน driver
+└── resources/  ไฟล์ INF และไฟล์รีซอร์ส
 
-resources/      Application resources, fonts, and operator images
-third_party/    ImGui, miniz, Zydis, and Zycore
+resources/      รีซอร์สแอปพลิเคชัน ฟอนต์ และรูปโอเปอเรเตอร์
+third_party/    ImGui, miniz, Zydis และ Zycore
 ```
 
-## Building
+## การคอมไพล์
 
-Open `lifus.slnx` in Visual Studio and build the `lifus` project in **x64 / Release** configuration.
+เปิด `lifus.slnx` ใน Visual Studio จากนั้น build โปรเจกต์ `lifus` ด้วยแพลตฟอร์ม **x64 / Release**
 
-The main application is emitted under:
+ไฟล์แอปพลิเคชันหลักจะถูกสร้างที่:
 
 ```text
 out\release\lifus.exe
 ```
 
-To build the kernel driver and loader, run `driver\build.cmd` from an elevated Command Prompt with Visual Studio and WDK environment discovery available.
+สำหรับ kernel driver และ loader ให้รัน `driver\build.cmd` จาก Command Prompt ที่เปิดด้วยสิทธิ์ผู้ดูแลระบบ โดยติดตั้ง Visual Studio และ WDK ให้พร้อมใช้งาน:
 
 ```bat
 cd /d driver
 build.cmd
 ```
 
-Build output is written to:
+ผลลัพธ์จากการ build อยู่ที่:
 
 ```text
 bin\driver\lifus.sys
 bin\loader\loader.exe
 ```
 
-## Controls
+## การควบคุม
 
-| Key | Action |
+| ปุ่ม | การทำงาน |
 |---|---|
-| Insert | Toggle the overlay menu |
-| Right mouse button | Activate aim-assist when enabled |
-| End | Exit the application |
+| Insert | เปิด/ปิดเมนู overlay |
+| ปุ่มเมาส์ขวา | เปิดใช้งานระบบช่วยเล็งเมื่อเปิดฟีเจอร์นั้นไว้ |
+| End | ปิดแอปพลิเคชัน |
 
-Controls and feature settings can be adjusted in the in-app menu.
+สามารถปรับการแสดงผลและฟีเจอร์ต่าง ๆ ได้จากเมนูภายในแอป
 
-## Diagnostics
+## ระบบวินิจฉัย
 
-The application initializes a diagnostic subsystem at startup. Diagnostic logs and crash artifacts can be opened from the application's Debug tab.
+แอปพลิเคชันเริ่มต้น diagnostic subsystem ขณะเปิดใช้งาน สามารถเปิดโฟลเดอร์ log และ artifacts ได้จากแท็บ Debug ในแอป
 
-## Third-party components
+## ไลบรารีภายนอก
 
 - [Dear ImGui](https://github.com/ocornut/imgui)
 - [Zydis](https://github.com/zyantific/zydis)
 - [Zycore](https://github.com/zyantific/zycore-c)
 - [miniz](https://github.com/richgel999/miniz)
 
-License notices for bundled third-party code are available in `third_party/notices.txt` and in each dependency directory.
+ข้อมูลลิขสิทธิ์และใบอนุญาตของไลบรารีภายนอกอยู่ใน `third_party/notices.txt` และในไดเรกทอรีของแต่ละ dependency
 
-## License
+## ใบอนุญาต
 
-No license file is currently included in this repository. All rights remain with the respective contributors unless a license is explicitly added.
+โปรเจกต์นี้ยังไม่มีไฟล์ license สิทธิ์จึงยังเป็นของผู้พัฒนาแต่ละคนตามที่เกี่ยวข้อง เว้นแต่จะมีการเพิ่มไฟล์ใบอนุญาตอย่างชัดเจนในภายหลัง
